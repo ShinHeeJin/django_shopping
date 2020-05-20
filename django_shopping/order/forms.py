@@ -39,6 +39,12 @@ class RegisterForm(forms.Form):
                     fcuser = Fcuser.objects.get(email=fcuser)
                 )
                 order.save()
+
+                if prod.stock < quantity or prod.stock == 0:
+                    self.product = product
+                    self.add_error('quantity','수량을 확인해주세요')
+                    return
+
                 prod.stock -= quantity # 재고 계산 ( 재고가 없는 경우 추가 필요 )
                 prod.save()
         else:
