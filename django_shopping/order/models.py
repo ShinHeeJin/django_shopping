@@ -4,7 +4,7 @@ from django.db import models
 class Order(models.Model):
     fcuser = models.ForeignKey('fcuser.Fcuser', on_delete=models.CASCADE, verbose_name="사용자") # 앱안의 모델 적용
     product = models.ForeignKey('product.Product', on_delete=models.CASCADE, verbose_name="상품")
-    quntity = models.IntegerField(verbose_name="수량")
+    quantity = models.IntegerField(verbose_name="수량")
     register_date = models.DateTimeField(auto_now_add=True, verbose_name="등록날짜")
 
     def __str__(self):
