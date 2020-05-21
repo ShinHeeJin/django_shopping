@@ -22,8 +22,6 @@ class RegisterView(FormView):
         )
         fcuser.save()
         return super().form_valid(form)
-        
-
 
 class LoginView(FormView):
     template_name = 'login.html'

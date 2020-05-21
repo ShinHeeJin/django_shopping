@@ -37,7 +37,12 @@ class OrderCreate(FormView):
 
     # 실패할경우
     def form_invalid(self, form):
-        return redirect('/product/' + str(form.data.get('product')))
+        product = form.data.get('product')
+        res_data = {
+            'form':form,
+            'product':Product.objects.get(pk=product)
+        }
+        return render(self.request, f'product_detail.html', res_data)
 
     def get_form_kwargs(self, **kwargs):
 
@@ -46,6 +51,7 @@ class OrderCreate(FormView):
             'request' : self.request
         })
         return kw
+        
 @method_decorator(login_required, name='dispatch')
 class OrderList(ListView):
     # model = Order # 이렇게 하면 다른사람이 주문한 정보도 볼수 있으므로 queryset을 써야 한다.

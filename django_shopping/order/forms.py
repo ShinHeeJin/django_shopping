@@ -25,9 +25,31 @@ class RegisterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        quantity = cleaned_data.get('quantity')
-        product = cleaned_data.get('product') # id
+        quantity = cleaned_data.get('quantity',None)
+        product = cleaned_data.get('product', None) # id
 
-        if not (quantity and product):
-            self.add_error('quantity','수량을 입력해 주세요')
-            self.add_error('product','수량을 입력해 주세요')            
+        if quantity is None:
+            # self.add_error('quantity','주문 수량을 입력해주세요')
+            return
+        
+        quantity = int(quantity)
+
+        if quantity < 0:
+            self.add_error('quantity','주문 수량을 확인해주세요')
+            return 
+
+        if quantity == 0:
+            self.add_error('quantity','하나 이상 주문해주세요')
+            return
+
+        stock = Product.objects.get(pk=product).stock
+
+        if stock == 0:
+            self.add_error('quantity','재고가 없습니다.')
+            return
+
+        if quantity > stock:
+            self.add_error('quantity','재고보다 많은 수량을 주문하셨습니다.')
+            return 
+
+          
