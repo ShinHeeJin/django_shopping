@@ -18,6 +18,17 @@ class ProductCreate(FormView):
     form_class = RegisterForm
     success_url = '/product/'
 
+    def form_valid(self, form):
+        product = Product(
+            name = form.data.get('name'),
+            price = form.data.get('price'),
+            description = form.data.get('description'),
+            stock = form.data.get('stock')
+        )
+        product.save()
+        # 오버라이딩을 했기때문에 부모생성자 필요
+        return super().form_valid(form)
+
 class ProductDetail(DetailView):
     template_name = 'product_detail.html'
     queryset = Product.objects.all() # 필터링 추가 가능

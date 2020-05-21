@@ -3,19 +3,41 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic.edit import FormView
+from django.db import transaction
 from fcuser.decorator import login_required
 from .forms import RegisterForm
 from .models import Order
-
+from product.models import Product
+from fcuser.models import Fcuser
 
 @method_decorator(login_required, name='dispatch')
 class OrderCreate(FormView):
     form_class = RegisterForm
     success_url = '/product/'
 
+    def form_valid(self, form):
+        # 트랜젝션 ( 상품 주문 )
+        with transaction.atomic():
+            prod = Product.objects.get(pk=form.data.get('product'))
+            quantity = int(form.data.get('quantity'))
+            email = self.request.session.get('user')
+            fcuser = Fcuser.objects.get(email=email)
+
+            # 주문생성
+            order = Order(
+                quantity = quantity,
+                fcuser = fcuser,
+                product = prod
+            )
+            order.save() # 저장
+            prod.stock -= quantity # 재고 계산 ( 재고가 없는 경우 추가 필요 )
+            prod.save()
+
+        return super().form_valid(form)
+
     # 실패할경우
     def form_invalid(self, form):
-        return redirect('/product/' + str(form.product))
+        return redirect('/product/' + str(form.data.get('product')))
 
     def get_form_kwargs(self, **kwargs):
 
