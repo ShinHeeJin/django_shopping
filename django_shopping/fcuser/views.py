@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 
 from .forms import LoginForm, RegisterForm
@@ -23,3 +23,8 @@ class LoginView(FormView):
         return super().form_valid(form)
         # form_valid는 django.http.HttpResponse를 반환한다.
         # 유효한 폼데이터가 POST 요청되었을 때 form_valid 메소드가 호출된다. form_valid는 단순히 success_url로의 연결을 수행한다.
+
+def logout(request):
+    if 'user' in request.session:
+        del(request.session['user'])
+    return redirect('/')

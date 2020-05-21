@@ -1,10 +1,14 @@
-from django.shortcuts import render, redirect
-from django.views.generic.edit import FormView
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView
+from django.views.generic.edit import FormView
+from fcuser.decorator import login_required
 from .forms import RegisterForm
 from .models import Order
 
-# Create your views here.
+
+@method_decorator(login_required, name='dispatch')
 class OrderCreate(FormView):
     form_class = RegisterForm
     success_url = '/product/'
@@ -20,7 +24,7 @@ class OrderCreate(FormView):
             'request' : self.request
         })
         return kw
-
+@method_decorator(login_required, name='dispatch')
 class OrderList(ListView):
     # model = Order # 이렇게 하면 다른사람이 주문한 정보도 볼수 있으므로 queryset을 써야 한다.
     template_name = 'order.html'
@@ -30,3 +34,5 @@ class OrderList(ListView):
     def get_queryset(self, **kwargs):
         queryset = Order.objects.filter(fcuser__email = self.request.session.get('user'))
         return queryset
+
+    # def dispatch(request, *args, **kwargs)
