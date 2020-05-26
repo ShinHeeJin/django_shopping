@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% load humanize %}
+
+{% block header %}
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: "/api/product",
+            success: function(result){
+                console.log(result)
+            }
+        })
+    })
+
+</script>
+
+{% endblock %}
+
 {% block contents %}
 
 <div class="row mt-5">
