@@ -60,7 +60,5 @@ create user result \( must be Y \)
 {% endapi-method-spec %}
 {% endapi-method %}
 
-```text
-print("hello world")
-```
+
 
